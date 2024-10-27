@@ -9,6 +9,7 @@ import io.restassured.response.Response;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
+import static Couriers.Constants.*;
 
 public class CourierMethods {
     private Gson gson;
@@ -16,23 +17,24 @@ public class CourierMethods {
     public CourierMethods(){
         gson = new GsonBuilder().setPrettyPrinting().create();
     }
+
     //Удаление курьера
     public void deleteCourier(int courierId) {
-        RestAssured.given()
+        RestAssured
+                .given()
                 .header("Content-Type", "application/json")
-                .when()
-                .delete("/api/v1/courier/" + courierId)
+                .delete(CREATE_ENDPOINT + courierId)
                 .then()
                 .statusCode(200); // Ожидаем успешное удаление курьера
-        System.out.println("Курьер с ID " + courierId + " был удален.");
     }
 
     //Получение ID курьера
     public int getCourierId(String login, String password) {
-        Response response = RestAssured.given()
+        Response response = RestAssured
+                .given()
                 .header("Content-Type", "application/json")
                 .body("{ \"login\": \"" + login + "\", \"password\": \"" + password + "\" }")
-                .post("/api/v1/courier/login");
+                .post(CREATE_ENDPOINT);
 
         if (response.getStatusCode() == 200) {
             return response.jsonPath().getInt("id");
@@ -79,12 +81,12 @@ public class CourierMethods {
         return "{ \"login\": \"" + login + "\", \"password\": \"" + password + "\", \"firstName\": \"" + firstName + "\" }";
     }
 
-    // Метод отправки POST запроса
+    // Метод отправки POST запроса на создание курьера
     public Response createCourier(String body) {
-        return RestAssured.given()
+        return RestAssured.
+                given()
                 .header("Content-Type", "application/json")
                 .body(body)
-                .when()
-                .post("/api/v1/courier");
+                .post(CREATE_ENDPOINT);
     }
 }

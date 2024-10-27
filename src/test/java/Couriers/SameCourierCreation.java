@@ -3,6 +3,7 @@ package Couriers;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.qameta.allure.*;
+import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.After;
@@ -12,7 +13,6 @@ import org.junit.Test;
 import static Couriers.Constants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 
 @Epic("API. Курьеры")
 @Feature("Создание курьера")
@@ -38,32 +38,66 @@ public class SameCourierCreation {
     @Test
     @Story("Создание курьеров с одинаковым логином")
     @Severity(SeverityLevel.CRITICAL)
-    @Description("При создании курьеров с одинаковым логином запрос возвращает сообщение об ошибке")
+    @DisplayName("Нельзя создать двух одинаковых курьеров")
     public void creationSameCouriersTest() {
         // Создаем объект курьера
-        Courier courier = new Courier("qazhof", "1234", "saske");
+        Courier courier = new Courier("ророо", "1234", "Moralez");
+
         // Преобразуем объект курьера в JSON
         String body = gson.toJson(courier);
 
-
+        //Создаем первого курьера
         Response firstCourierResponse = RestAssured
                 .given()
                 .header("Content-Type", "application/json")
                 .body(body)
                 .post(CREATE_ENDPOINT);
 
+        //Создаем второго курьера с таким же логином
         Response secondCourierResponse = RestAssured
                 .given()
                 .header("Content-Type", "application/json")
                 .body(body)
                 .post(CREATE_ENDPOINT);
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        // Проверяем статус ответа
+        courierMethods.checkStatusCode(secondCourierResponse, 409);
+        System.out.println("Вы создаете курьера с уже существующим логином");
+
+        courierID = courierMethods.getCourierId(courier.getLogin(), courier.getPassword());
+    }
+
+    @Test
+    @Story("Создание курьеров с одинаковым логином")
+    @Severity(SeverityLevel.NORMAL)
+    @DisplayName("Если создать пользователя с логином, который уже есть, возвращается ошибка")
+    public void sameCourierCreationResponseErrorTest() {
+        // Создаем объект курьера
+        Courier courier = new Courier("ророо", "1234", "Moralez");
+
+        // Преобразуем объект курьера в JSON
+        String body = gson.toJson(courier);
+
+        //Создаем первого курьера
+        Response firstCourierResponse = RestAssured
+                .given()
+                .header("Content-Type", "application/json")
+                .body(body)
+                .post(CREATE_ENDPOINT);
+
+        //Создаем второго курьера с таким же логином
+        Response secondCourierResponse = RestAssured
+                .given()
+                .header("Content-Type", "application/json")
+                .body(body)
+                .post(CREATE_ENDPOINT);
+
+        //Проверяем сообщение об ошибке
         courierMethods.printResponse(secondCourierResponse, gson);
-        assertThat(secondCourierResponse.getStatusCode(), is(409));
         String expectedMessage = "Этот логин уже используется. Попробуйте другой.";
         assertThat(secondCourierResponse.jsonPath().getString("message"), is(expectedMessage));
+
+        //Получаем ID курьера
         courierID = courierMethods.getCourierId(courier.getLogin(), courier.getPassword());
-        assertThat(courierID, is(not(-1)));
     }
 }

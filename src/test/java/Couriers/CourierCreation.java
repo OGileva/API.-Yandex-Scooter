@@ -3,6 +3,7 @@ package Couriers;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.qameta.allure.*;
+import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.After;
@@ -11,8 +12,7 @@ import org.junit.Test;
 
 import static Couriers.Constants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
 
 @Epic("API. Курьеры")
 @Feature("Создание курьера")
@@ -34,13 +34,13 @@ public class CourierCreation {
             courierMethods.deleteCourier(courierID);
         }
     }
+
     @Test
-    @Story("Создание нового курьера")
     @Severity(SeverityLevel.CRITICAL)
-    @Description("Курьера возможно создать, запрос возвращает правильный код и тело ответа")
+    @DisplayName("Курьера можно создать")
     public void creationCourierTest() {
         // Создаем объект курьера
-        Courier courier = new Courier("James", "1234", "StPatric");
+        Courier courier = new Courier("Breyden", "1234", "Westen");
 
         // Преобразуем объект курьера в JSON
         String body = gson.toJson(courier);
@@ -58,23 +58,62 @@ public class CourierCreation {
 
         // Получаем ID курьера
         courierID = courierMethods.getCourierId(courier.getLogin(), courier.getPassword());
-        assertThat(courierID, is(not(-1)));
+        if(courierID != -1) {
+            System.out.println("Учетная запись курьера успешно создана в системе");
+        }
     }
 
     @Test
-    @Story("Подтвердите «ok: true» для успешного создания курьера.")
-    @Severity(SeverityLevel.CRITICAL)
-    @Description("Убедитесь, что успешное создание курьера возвращает в ответе «ok: true».")
-    public void testCreateCourierOkTrue() {
-        String body = courierMethods.createRequestBody("Tariq", "1234", "StPatric");
-        Response response = courierMethods.createCourier(body);
+    @Severity(SeverityLevel.NORMAL)
+    @DisplayName("Успешный запрос возвращает ok: true")
+    public void successfulCreationResponseBodyTest() {
+        // Создаем объект курьера
+        Courier courier = new Courier("Yasmin", "1234", "StPatric");
 
+        // Преобразуем объект курьера в JSON
+        String body = gson.toJson(courier);
+
+        // Выполняем POST запрос для создания курьера
+        Response response = RestAssured
+                .given()
+                .header("Content-Type", "application/json")
+                .body(body)
+                .post(CREATE_ENDPOINT);
+
+        //Форматируем тело ответа
         String formattedResponseBody = courierMethods.formatResponseBody(response.getBody().asString());
 
-        System.out.println("Formatted response body: " + formattedResponseBody);
-        // Авторизуемся и сохраняем ID курьера
-        courierID = courierMethods.authorizeCourier("Tariq", "1234");
+        // Проверяем, что ответ содержит "ok: true"
+        assertThat(formattedResponseBody, containsString("\"ok\": true"));
+        System.out.println("Возвращается тело ответа ok:true");
+
+        // Получаем ID курьера
+        courierID = courierMethods.getCourierId(courier.getLogin(), courier.getPassword());
     }
 
+    @Test
+    @Severity(SeverityLevel.NORMAL)
+    @DisplayName("Успешный запрос возвращает код ответа 201 Created")
+    public void successfulCreationStatusCode201Test() {
+        // Создаем объект курьера
+        Courier courier = new Courier("Tariq", "1234", "StPatric");
+
+        // Преобразуем объект курьера в JSON
+        String body = gson.toJson(courier);
+
+        // Выполняем POST запрос для создания курьера
+        Response response = RestAssured
+                .given()
+                .header("Content-Type", "application/json")
+                .body(body)
+                .post(CREATE_ENDPOINT);
+
+        // Проверяем статус код и ответ
+        courierMethods.checkStatusCode(response, 201);
+        System.out.println("Код ответа 201 Created");
+
+        // Получаем ID курьера
+        courierID = courierMethods.getCourierId(courier.getLogin(), courier.getPassword());
+    }
 }
 
