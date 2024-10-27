@@ -41,7 +41,7 @@ public class SameCourierCreation {
     @DisplayName("Нельзя создать двух одинаковых курьеров")
     public void creationSameCouriersTest() {
         // Создаем объект курьера
-        Courier courier = new Courier("ророо", "1234", "Moralez");
+        Courier courier = new Courier("Brayden", "1234", "Westen");
 
         // Преобразуем объект курьера в JSON
         String body = gson.toJson(courier);
@@ -73,7 +73,7 @@ public class SameCourierCreation {
     @DisplayName("Если создать пользователя с логином, который уже есть, возвращается ошибка")
     public void sameCourierCreationResponseErrorTest() {
         // Создаем объект курьера
-        Courier courier = new Courier("ророо", "1234", "Moralez");
+        Courier courier = new Courier("Effie", "1234", "Moralez");
 
         // Преобразуем объект курьера в JSON
         String body = gson.toJson(courier);

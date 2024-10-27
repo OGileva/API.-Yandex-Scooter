@@ -40,7 +40,7 @@ public class CourierCreation {
     @DisplayName("Курьера можно создать")
     public void creationCourierTest() {
         // Создаем объект курьера
-        Courier courier = new Courier("Breyden", "1234", "Westen");
+        Courier courier = new Courier("Tariq", "1234", "StPatric");
 
         // Преобразуем объект курьера в JSON
         String body = gson.toJson(courier);
@@ -68,7 +68,7 @@ public class CourierCreation {
     @DisplayName("Успешный запрос возвращает ok: true")
     public void successfulCreationResponseBodyTest() {
         // Создаем объект курьера
-        Courier courier = new Courier("Yasmin", "1234", "StPatric");
+        Courier courier = new Courier("James", "1234", "StPatric");
 
         // Преобразуем объект курьера в JSON
         String body = gson.toJson(courier);
@@ -96,7 +96,7 @@ public class CourierCreation {
     @DisplayName("Успешный запрос возвращает код ответа 201 Created")
     public void successfulCreationStatusCode201Test() {
         // Создаем объект курьера
-        Courier courier = new Courier("Tariq", "1234", "StPatric");
+        Courier courier = new Courier("Tasha", "1234", "StPatric");
 
         // Преобразуем объект курьера в JSON
         String body = gson.toJson(courier);

@@ -40,7 +40,7 @@ public class CourierFields {
     @Description("Успешное создание курьера с полем логин и пароль")
     public void testCreateCourierWithAllRequiredFields() {
         // Создаем объект курьера
-        Courier courier = new Courier("Kane", "1234", "Tejada");
+        Courier courier = new Courier("Monet", "1234", "Tejada");
 
         // Преобразуем объект курьера в JSON
         String body = gson.toJson(courier);
@@ -57,7 +57,7 @@ public class CourierFields {
         assertThat(response.jsonPath().get("ok"), is(true));
 
         //Получаем ID курьера
-        courierID = courierMethods.getCourierId(courier.getLogin(), courier.getPassword()); // Сохраняем ID курьера
+        courierID = courierMethods.getCourierId(courier.getLogin(), courier.getPassword());
         System.out.println("Успешное создание учетной записи с полями login, password, first name");
     }
 

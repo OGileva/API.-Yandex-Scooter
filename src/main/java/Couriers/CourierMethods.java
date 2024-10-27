@@ -6,15 +6,16 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.hamcrest.Matchers;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
-import static Couriers.Constants.*;
 
 public class CourierMethods {
     private Gson gson;
 
-    public CourierMethods(){
+    public CourierMethods() {
         gson = new GsonBuilder().setPrettyPrinting().create();
     }
 
@@ -23,9 +24,9 @@ public class CourierMethods {
         RestAssured
                 .given()
                 .header("Content-Type", "application/json")
-                .delete(CREATE_ENDPOINT + courierId)
+                .delete("/api/v1/courier/" + courierId)
                 .then()
-                .statusCode(200); // Ожидаем успешное удаление курьера
+                .statusCode(200);
     }
 
     //Получение ID курьера
@@ -34,7 +35,7 @@ public class CourierMethods {
                 .given()
                 .header("Content-Type", "application/json")
                 .body("{ \"login\": \"" + login + "\", \"password\": \"" + password + "\" }")
-                .post(CREATE_ENDPOINT);
+                .post("/api/v1/courier/login");
 
         if (response.getStatusCode() == 200) {
             return response.jsonPath().getInt("id");
@@ -42,6 +43,7 @@ public class CourierMethods {
             return -1; // Если авторизация не удалась
         }
     }
+
     //Форматируем тело ответа
     public String formatResponseBody(String responseBody) {
         JsonElement jsonElement = JsonParser.parseString(responseBody);
@@ -57,6 +59,7 @@ public class CourierMethods {
     public void checkErrorMessage(Response response, String expectedMessage) {
         assertThat(response.jsonPath().getString("message"), is(expectedMessage));
     }
+
     //Авторизация
     public int authorizeCourier(String login, String password) {
         int courierId = getCourierId(login, password);
@@ -87,6 +90,8 @@ public class CourierMethods {
                 given()
                 .header("Content-Type", "application/json")
                 .body(body)
-                .post(CREATE_ENDPOINT);
+                .post("/api/v1/courier");
     }
+
+
 }
