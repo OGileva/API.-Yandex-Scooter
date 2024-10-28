@@ -9,7 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static Couriers.Constants.*;
+import static Couriers.CourierConstants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -50,7 +50,7 @@ public class CourierFields {
                 .header("Content-Type", "application/json")
                 .body(body)
                 .when()
-                .post(CREATE_ENDPOINT);
+                .post(COURIER_CREATE_ENDPOINT);
 
         // Проверяем статус код и ответ
         courierMethods.checkStatusCode(response, 201);
@@ -76,7 +76,7 @@ public class CourierFields {
                 given()
                 .header("Content-Type", "application/json")
                 .body(bodyWithoutLogin)
-                .post(CREATE_ENDPOINT);
+                .post(COURIER_CREATE_ENDPOINT);
 
         courierMethods.printResponse(response, gson);
         assertThat(response.jsonPath().getString("message"), is(expectedMessage));
@@ -98,7 +98,7 @@ public class CourierFields {
                 given()
                 .header("Content-Type", "application/json")
                 .body(bodyWithoutLogin)
-                .post(CREATE_ENDPOINT);
+                .post(COURIER_CREATE_ENDPOINT);
 
         courierMethods.printResponse(response, gson);
         assertThat(response.jsonPath().getString("message"), is(expectedMessage));
@@ -108,7 +108,7 @@ public class CourierFields {
     @Test
     @Story("Появление сообщения об ошибке, если не заполнены обязательные поля")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Запрос возвращает ошибку если не указано поле пароль")
+    @Description("Запрос возвращает ошибку если не указано поле пароль и логин")
     public void courierCreationWithoutRequiredFieldsTest() {
         //Создаем тело запроса без логина и пароля
         String bodyWithoutLogin = "{\"firstName\": \"Tejada\" }";
@@ -120,7 +120,7 @@ public class CourierFields {
                 given()
                 .header("Content-Type", "application/json")
                 .body(bodyWithoutLogin)
-                .post(CREATE_ENDPOINT);
+                .post(COURIER_CREATE_ENDPOINT);
 
         courierMethods.printResponse(response, gson);
         assertThat(response.jsonPath().getString("message"), is(expectedMessage));

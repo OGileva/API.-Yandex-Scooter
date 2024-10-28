@@ -10,7 +10,7 @@ import io.restassured.response.Response;
 import org.junit.Before;
 import org.junit.Test;
 
-import static Couriers.Constants.*;
+import static Couriers.CourierConstants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -143,5 +143,24 @@ public class CourierAuthorizationError {
         } finally {
             courierMethods.deleteCourier(courierID);
         }
+    }
+
+    @Test
+    @Severity(SeverityLevel.CRITICAL)
+    @DisplayName("Нельзя авторизоваться под несуществущим пользователем")
+    public void incorrectCourierAuthorizationTest() {
+        String incorrectBody = "{ \"login\": \"Adamoff\", \"password\": \"12347\" }";
+
+        Response response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .body(incorrectBody)
+                .post("/api/v1/courier/login");
+
+        assertThat(response.getStatusCode(), is(404));
+        assertThat(response.jsonPath().getString("message"), is("Учетная запись не найдена"));
+
+        System.out.println("Not existent user login:");
+        System.out.println("Response Code: " + response.getStatusCode());
+        System.out.println("Response Body: " + response.asString());
     }
 }

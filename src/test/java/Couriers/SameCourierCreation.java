@@ -10,7 +10,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static Couriers.Constants.*;
+import static Couriers.CourierConstants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -51,14 +51,14 @@ public class SameCourierCreation {
                 .given()
                 .header("Content-Type", "application/json")
                 .body(body)
-                .post(CREATE_ENDPOINT);
+                .post(COURIER_CREATE_ENDPOINT);
 
         //Создаем второго курьера с таким же логином
         Response secondCourierResponse = RestAssured
                 .given()
                 .header("Content-Type", "application/json")
                 .body(body)
-                .post(CREATE_ENDPOINT);
+                .post(COURIER_CREATE_ENDPOINT);
 
         // Проверяем статус ответа
         courierMethods.checkStatusCode(secondCourierResponse, 409);
@@ -83,14 +83,14 @@ public class SameCourierCreation {
                 .given()
                 .header("Content-Type", "application/json")
                 .body(body)
-                .post(CREATE_ENDPOINT);
+                .post(COURIER_CREATE_ENDPOINT);
 
         //Создаем второго курьера с таким же логином
         Response secondCourierResponse = RestAssured
                 .given()
                 .header("Content-Type", "application/json")
                 .body(body)
-                .post(CREATE_ENDPOINT);
+                .post(COURIER_CREATE_ENDPOINT);
 
         //Проверяем сообщение об ошибке
         courierMethods.printResponse(secondCourierResponse, gson);
