@@ -3,6 +3,7 @@ package Couriers;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.qameta.allure.*;
+import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.After;
@@ -13,8 +14,9 @@ import static Couriers.CourierConstants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-@Epic("API. Курьеры")
-@Feature("Создание курьера")
+@Epic("Яндекс.Самокат")
+@Feature("Тестирование API создания курьера")
+@DisplayName("Проверка обязательности заполнения полей")
 public class CourierFields {
 
     private Gson gson;
@@ -22,12 +24,14 @@ public class CourierFields {
     private CourierMethods courierMethods = new CourierMethods();
 
     @Before
+    @Step("Подготовка данных")
     public void setUp() {
         RestAssured.baseURI = BASE_URI;
         gson = new GsonBuilder().setPrettyPrinting().create();
     }
 
     @After
+    @Step("Удаление курьера после теста")
     public void tearDown() {
         if (courierID != -1) {
             courierMethods.deleteCourier(courierID);
@@ -35,9 +39,9 @@ public class CourierFields {
     }
 
     @Test
-    @Story("Проверка обязательных полей для создания курьера")
+    @DisplayName("Создание курьера с заполнение обязательных полей - логин и пароль")
+    @Description("Успешное создание учетной записи. Код и статус ответа 201 Created")
     @Severity(SeverityLevel.CRITICAL)
-    @Description("Успешное создание курьера с полем логин и пароль")
     public void testCreateCourierWithAllRequiredFields() {
         // Создаем объект курьера
         Courier courier = new Courier("Monet", "1234", "Tejada");
@@ -62,9 +66,9 @@ public class CourierFields {
     }
 
     @Test
-    @Story("Появление сообщения об ошибке, если не заполнены обязательные поля")
-    @Severity(SeverityLevel.NORMAL)
-    @Description("Запрос возвращает ошибку если не указано поле логин")
+    @DisplayName("Создание курьера без поля login")
+    @Description("Невозможно создать курьера без поля login. Код и статус ответа 400 Bad Request")
+    @Severity(SeverityLevel.CRITICAL)
     public void courierCreationWithoutLoginTest() {
         //Создаем тело запроса без логина
         String bodyWithoutLogin = "{ \"password\": \"1234\", \"firstName\": \"Tejada\" }";
@@ -84,9 +88,9 @@ public class CourierFields {
     }
 
     @Test
-    @Story("Появление сообщения об ошибке, если не заполнены обязательные поля")
-    @Severity(SeverityLevel.NORMAL)
-    @Description("Запрос возвращает ошибку если не указано поле пароль")
+    @DisplayName("Создание курьера без поля password")
+    @Description("Невозможно создать курьера без поля password. Код и статус ответа 400 Bad Request")
+    @Severity(SeverityLevel.CRITICAL)
     public void courierCreationWithoutPasswordTest() {
         //Создаем тело запроса без пароля
         String bodyWithoutLogin = "{ \"login\": \"Diana\", \"firstName\": \"Tejada\" }";
@@ -106,9 +110,9 @@ public class CourierFields {
     }
 
     @Test
-    @Story("Появление сообщения об ошибке, если не заполнены обязательные поля")
-    @Severity(SeverityLevel.NORMAL)
-    @Description("Запрос возвращает ошибку если не указано поле пароль и логин")
+    @DisplayName("Создание курьера без обязательных полей")
+    @Description("Невозможно создать курьера без обязательных полей. Код и статус ответа 400 Bad Request")
+    @Severity(SeverityLevel.CRITICAL)
     public void courierCreationWithoutRequiredFieldsTest() {
         //Создаем тело запроса без логина и пароля
         String bodyWithoutLogin = "{\"firstName\": \"Tejada\" }";

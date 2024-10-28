@@ -14,8 +14,9 @@ import static Couriers.CourierConstants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-@Epic("API. Курьеры")
-@Feature("Создание курьера")
+@Epic("Яндекс.Самокат")
+@Feature("Тестирование API создания курьера")
+@DisplayName("Проверка возможности создания курьера")
 public class CourierCreation {
 
     private Gson gson;
@@ -23,12 +24,14 @@ public class CourierCreation {
     private CourierMethods courierMethods = new CourierMethods();
 
     @Before
+    @Step("Подготовка данных")
     public void setUp() {
         RestAssured.baseURI = BASE_URI;
         gson = new GsonBuilder().setPrettyPrinting().create();
     }
 
     @After
+    @Step("Удаление курьера после теста")
     public void tearDown() {
         if (courierID != -1) {
             courierMethods.deleteCourier(courierID);
@@ -36,8 +39,9 @@ public class CourierCreation {
     }
 
     @Test
+    @DisplayName("Создание курьера")
+    @Description("Успешное создание учетной записи. Код и статус ответа 201 Created")
     @Severity(SeverityLevel.CRITICAL)
-    @DisplayName("Курьера можно создать")
     public void creationCourierTest() {
         // Создаем объект курьера
         Courier courier = new Courier("Tariq", "1234", "StPatric");
@@ -64,8 +68,8 @@ public class CourierCreation {
     }
 
     @Test
-    @Severity(SeverityLevel.NORMAL)
     @DisplayName("Успешный запрос возвращает ok: true")
+    @Severity(SeverityLevel.NORMAL)
     public void successfulCreationResponseBodyTest() {
         // Создаем объект курьера
         Courier courier = new Courier("James", "1234", "StPatric");
@@ -92,8 +96,8 @@ public class CourierCreation {
     }
 
     @Test
-    @Severity(SeverityLevel.NORMAL)
     @DisplayName("Успешный запрос возвращает код ответа 201 Created")
+    @Severity(SeverityLevel.NORMAL)
     public void successfulCreationStatusCode201Test() {
         // Создаем объект курьера
         Courier courier = new Courier("Tasha", "1234", "StPatric");

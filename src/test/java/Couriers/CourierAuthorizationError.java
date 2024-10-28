@@ -14,8 +14,9 @@ import static Couriers.CourierConstants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-@Epic("API. Курьеры")
-@Feature("Авторизация курьера")
+@Epic("Яндекс.Самокат")
+@Feature("Тестирование API авторизации курьера")
+@DisplayName("Проверка возможности авторизации курьера")
 public class CourierAuthorizationError {
 
     private Gson gson;
@@ -23,6 +24,7 @@ public class CourierAuthorizationError {
     private CourierMethods courierMethods = new CourierMethods();
 
     @Before
+    @Step("Подготовка данных")
     public void setUp() {
         RestAssured.baseURI = BASE_URI;
         gson = new GsonBuilder().setPrettyPrinting().create();
@@ -30,8 +32,9 @@ public class CourierAuthorizationError {
     }
 
     @Test
-    @Severity(SeverityLevel.CRITICAL)
-    @DisplayName("При авторизации без логина появляется сообщение об ошибке")
+    @DisplayName("Авторизация курьера без поля login")
+    @Description("Появление сообщения об ошибке, если не указано поле login. Код и статус ответа 400 Bad Request.")
+    @Severity(SeverityLevel.NORMAL)
     public void courierAuthorizationWithoutLoginTest() {
         // Создаем курьера
         Courier courier = new Courier("Davis", "1234", "McClean");
@@ -70,8 +73,9 @@ public class CourierAuthorizationError {
     }
 
     @Test
-    @Severity(SeverityLevel.CRITICAL)
-    @DisplayName("При авторизации без пароля появляется сообщение об ошибке")
+    @DisplayName("Авторизация курьера без поля password")
+    @Description("Появление сообщения об ошибке, если не указано поле password. Код и статус ответа 400 Bad Request.")
+    @Severity(SeverityLevel.NORMAL)
     public void courierAuthorizationWithoutPasswordTest() {
         // Создаем курьера
         Courier courier = new Courier("Davis", "1234", "McClean");
@@ -108,8 +112,9 @@ public class CourierAuthorizationError {
     }
 
     @Test
-    @Severity(SeverityLevel.CRITICAL)
-    @DisplayName("При авторизации без пароля и логина появляется сообщение об ошибке")
+    @DisplayName("Авторизация курьера без поля password и поля login")
+    @Description("Появление сообщения об ошибке, если не указано поле password и поле login. Код и статус ответа 400 Bad Request.")
+    @Severity(SeverityLevel.NORMAL)
     public void courierAuthorizationWithoutFieldsTest() {
         // Создаем курьера
         Courier courier = new Courier("Davis", "1234", "McClean");
@@ -146,8 +151,9 @@ public class CourierAuthorizationError {
     }
 
     @Test
-    @Severity(SeverityLevel.CRITICAL)
-    @DisplayName("Нельзя авторизоваться под несуществущим пользователем")
+    @DisplayName("Авторизация с некорректными данными")
+    @Description("Появление сообщения об ошибке, если указаны несуществующие логин и пароль. Код и статус ответа 404 Not Found.")
+    @Severity(SeverityLevel.NORMAL)
     public void incorrectCourierAuthorizationTest() {
         String incorrectBody = "{ \"login\": \"Adamoff\", \"password\": \"12347\" }";
 

@@ -14,8 +14,9 @@ import static Couriers.CourierConstants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-@Epic("API. Курьеры")
-@Feature("Авторизация курьера")
+@Epic("Яндекс.Самокат")
+@Feature("Тестирование API авторизации курьера")
+@DisplayName("Проверка возможности авторизации курьера")
 public class CourierLogin {
 
     private Gson gson;
@@ -23,6 +24,7 @@ public class CourierLogin {
     private CourierMethods courierMethods = new CourierMethods();
 
     @Before
+    @Step("Подготовка данных")
     public void setUp() {
         RestAssured.baseURI = BASE_URI;
         gson = new GsonBuilder().setPrettyPrinting().create();
@@ -30,6 +32,7 @@ public class CourierLogin {
     }
 
     @After
+    @Step("Удаление курьера после теста")
     public void tearDown() {
         if (courierID != -1) {
             courierMethods.deleteCourier(courierID);
@@ -37,8 +40,9 @@ public class CourierLogin {
     }
 
     @Test
-    @Severity(SeverityLevel.CRITICAL)
     @DisplayName("Курьер может авторизоваться")
+    @Description("Курьер авторизован, если указаны верные данные. Код ответа 200 ОК.")
+    @Severity(SeverityLevel.CRITICAL)
     public void courierAuthorizationTest() {
 
         //Создаем курьера
@@ -64,8 +68,9 @@ public class CourierLogin {
     }
 
     @Test
+    @DisplayName("Получение ID курьера")
+    @Description("При успешной авторизации в ответе возвращается ID курьера")
     @Severity(SeverityLevel.CRITICAL)
-    @DisplayName("При успешной авторизации возвращается ID курьера")
     public void courierAuthorizationGetIdTest() {
 
         //Создаем курьера

@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.hamcrest.Matchers;
@@ -20,6 +21,7 @@ public class CourierMethods {
     }
 
     //Удаление курьера
+    @Step("Удаление курьера")
     public void deleteCourier(int courierId) {
         RestAssured
                 .given()
@@ -30,6 +32,7 @@ public class CourierMethods {
     }
 
     //Получение ID курьера
+    @Step("Получение ID курьера")
     public int getCourierId(String login, String password) {
         Response response = RestAssured
                 .given()
@@ -45,22 +48,26 @@ public class CourierMethods {
     }
 
     //Форматируем тело ответа
+    @Step("Получение тела ответа в формате JSON")
     public String formatResponseBody(String responseBody) {
         JsonElement jsonElement = JsonParser.parseString(responseBody);
         return gson.toJson(jsonElement);
     }
 
     //Проверяем код ответа
+    @Step("Проверка кода ответа")
     public void checkStatusCode(Response response, int expectedStatusCode) {
         assertThat(response.getStatusCode(), is(expectedStatusCode));
     }
 
     //Проверяем сообщение об ошибке
+    @Step("Проверка сообщения об ошибке")
     public void checkErrorMessage(Response response, String expectedMessage) {
         assertThat(response.jsonPath().getString("message"), is(expectedMessage));
     }
 
     //Авторизация
+    @Step("Авторизация курьера")
     public int authorizeCourier(String login, String password) {
         int courierId = getCourierId(login, password);
         assertThat(courierId, is(not(-1))); // Убедитесь, что ID корректен
@@ -68,6 +75,7 @@ public class CourierMethods {
     }
 
     //Вывести тело и код ответа
+    @Step("Получение тела и кода ответа")
     public void printResponse(Response response, Gson gson) {
         String responseBody = response.getBody().asString();
 
@@ -80,11 +88,13 @@ public class CourierMethods {
     }
 
     // Метод создания тела запроса
+    @Step("Создание тела запроса в формате JSON")
     public String createRequestBody(String login, String password, String firstName) {
         return "{ \"login\": \"" + login + "\", \"password\": \"" + password + "\", \"firstName\": \"" + firstName + "\" }";
     }
 
     // Метод отправки POST запроса на создание курьера
+    @Step("Отправка POST запроса на создание курьера")
     public Response createCourier(String body) {
         return RestAssured.
                 given()

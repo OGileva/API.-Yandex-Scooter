@@ -16,7 +16,7 @@ import static Orders.OrderConstants.*;
 public class OrderMethods {
 
     //Создание заказа
-    @Step("Создать заказ")
+    @Step("Создание заказа")
     public static Response createOrder(Order order) {
         Response response = given()
                 .spec(Specifications.requestSpec())

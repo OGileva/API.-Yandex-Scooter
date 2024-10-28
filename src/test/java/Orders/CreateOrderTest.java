@@ -1,18 +1,19 @@
 package Orders;
 
+import io.qameta.allure.Description;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.Response;
-import org.aspectj.weaver.ast.Or;
-import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import static org.apache.http.HttpStatus.*;
-import static Orders.OrderMethods.*;
-import static Orders.OrderConstants.*;
-import static Orders.Specifications.*;
 
 @RunWith(Parameterized.class)
+@Epic("Яндекс Самокат")
+@Feature("Тестирование API создания заказа")
+@DisplayName("Создание заказа")
 public class CreateOrderTest {
     private final String firstName;
     private final String lastName;
@@ -49,6 +50,7 @@ public class CreateOrderTest {
 
     @Test
     @DisplayName("Создание заказа с выбором цвета самоката")
+    @Description("Заказ можно создать, в ответе возвращается track")
     public void createOrderWithScooterColorTest() {
 
         Order order = new Order(firstName, lastName, address,

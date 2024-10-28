@@ -14,8 +14,9 @@ import static Couriers.CourierConstants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-@Epic("API. Курьеры")
-@Feature("Создание курьера")
+@Epic("Яндекс.Самокат")
+@Feature("Тестирование API создания курьера")
+@DisplayName("Проверка возможности создания курьера")
 public class SameCourierCreation {
 
     private Gson gson;
@@ -23,12 +24,14 @@ public class SameCourierCreation {
     private CourierMethods courierMethods = new CourierMethods();
 
     @Before
+    @Step("Подготовка данных")
     public void setUp() {
         RestAssured.baseURI = BASE_URI;
         gson = new GsonBuilder().setPrettyPrinting().create();
     }
 
     @After
+    @Step("Удаление курьера после теста")
     public void tearDown() {
         if (courierID != -1) {
             courierMethods.deleteCourier(courierID);
@@ -36,9 +39,9 @@ public class SameCourierCreation {
     }
 
     @Test
-    @Story("Создание курьеров с одинаковым логином")
+    @DisplayName("Проверка возможности создания курьера с существующим логином логином")
+    @Description("Нельзя создать курьера с существующим логином. Код и статус ответа 409 Сonflict.")
     @Severity(SeverityLevel.CRITICAL)
-    @DisplayName("Нельзя создать двух одинаковых курьеров")
     public void creationSameCouriersTest() {
         // Создаем объект курьера
         Courier courier = new Courier("Brayden", "1234", "Westen");
@@ -68,9 +71,9 @@ public class SameCourierCreation {
     }
 
     @Test
-    @Story("Создание курьеров с одинаковым логином")
-    @Severity(SeverityLevel.NORMAL)
-    @DisplayName("Если создать пользователя с логином, который уже есть, возвращается ошибка")
+    @DisplayName("Проверка сообщения об ошибке при создании курьера с существующим логином")
+    @Description("Появление сообщения об ошибке при создании курьера с существующим логином. Текст сообщения: Этот логин уже используется")
+    @Severity(SeverityLevel.CRITICAL)
     public void sameCourierCreationResponseErrorTest() {
         // Создаем объект курьера
         Courier courier = new Courier("Effie", "1234", "Moralez");
