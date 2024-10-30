@@ -1,4 +1,4 @@
-package Orders;
+package orders;
 
 public class OrderConstants {
     static final String CREATE_ORDER_ENDPOINT = "/api/v1/orders";

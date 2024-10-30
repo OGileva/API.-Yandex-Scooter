@@ -1,4 +1,4 @@
-package Orders;
+package orders;
 
 import io.qameta.allure.Step;
 import io.qameta.allure.internal.shadowed.jackson.databind.ObjectMapper;
@@ -10,7 +10,7 @@ import java.util.Map;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
-import static Orders.OrderConstants.*;
+import static orders.OrderConstants.*;
 
 
 public class OrderMethods {

@@ -1,4 +1,4 @@
-package Orders;
+package orders;
 
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;

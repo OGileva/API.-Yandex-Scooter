@@ -1,4 +1,4 @@
-package Couriers;
+package couriers;
 
 public class CourierConstants {
     static final String BASE_URI = "https://qa-scooter.praktikum-services.ru";
