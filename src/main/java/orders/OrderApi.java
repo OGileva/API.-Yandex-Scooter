@@ -28,23 +28,6 @@ public class OrderApi {
         return response;
     }
 
-    // Новый метод для проверки поля 'track'
-    private static Integer validateTrackNumber(Response response) {
-        JsonPath jsonPath = new JsonPath(response.asString());
-        Integer trackNumber = jsonPath.get("track");
-        if (trackNumber == null) {
-            throw new RuntimeException("Ошибка при создании заказа. Поле 'track' отсутствует в ответе. Тело ответа: " + response.asString());
-        }
-        return trackNumber;
-    }
-
-    // Новый метод для проверки кода ответа
-    private static void checkResponseStatus(Response response, int expectedStatusCode) {
-        if (response.getStatusCode() != expectedStatusCode) {
-            throw new RuntimeException("Ошибка при создании заказа. Код ответа: " + response.getStatusCode() + ", Тело ответа: " + response.asString());
-        }
-    }
-
     //Проверка трек номера
     @Step("Сравнение ожидаемого кода ответа с фактическим")
     public static void checkTrackingNumber(Response response, int responseCode) {

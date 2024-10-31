@@ -13,11 +13,12 @@ import org.junit.Test;
 import static couriers.CourierConstants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.apache.http.HttpStatus.*;
 
 @Epic("Яндекс.Самокат")
 @Feature("Тестирование API авторизации курьера")
 @DisplayName("Проверка возможности авторизации курьера")
-public class CourierLogin {
+public class CourierLoginTests {
 
     private Gson gson;
     private int courierID = -1;
@@ -57,7 +58,7 @@ public class CourierLogin {
         Response loginResponse = courierApi.authorizeCourier(loginBody);
 
         //Проверяем код ответа
-        courierApi.checkStatusCode(loginResponse, 200);
+        courierApi.checkStatusCode(loginResponse, SC_OK);
         System.out.println("Курьер успешно авторизован");
 
         courierID = courierApi.getCourierId(courier.getLogin(), courier.getPassword());

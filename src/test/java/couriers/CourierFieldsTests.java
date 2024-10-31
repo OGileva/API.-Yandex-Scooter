@@ -11,13 +11,14 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static couriers.CourierConstants.*;
+import static org.apache.http.HttpStatus.SC_CREATED;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 @Epic("Яндекс.Самокат")
 @Feature("Тестирование API создания курьера")
 @DisplayName("Проверка обязательности заполнения полей")
-public class CourierFields {
+public class CourierFieldsTests {
 
     private Gson gson;
     private int courierID = -1;
@@ -53,8 +54,9 @@ public class CourierFields {
         Response response = courierApi.createCourier(body);
 
         // Проверяем статус код и ответ
-        courierApi.checkStatusCode(response, 201);
+        assertThat(response.getStatusCode(), is(SC_CREATED)); // Проверка, что статус 201 Created
         assertThat(response.jsonPath().get("ok"), is(true));
+
 
         //Получаем ID курьера
         courierID = courierApi.getCourierId(courier.getLogin(), courier.getPassword());

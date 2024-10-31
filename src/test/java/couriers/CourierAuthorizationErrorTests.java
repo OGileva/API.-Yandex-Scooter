@@ -12,6 +12,7 @@ import org.junit.Test;
 import static couriers.CourierConstants.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.apache.http.HttpStatus.*;
 
 @Epic("Яндекс.Самокат")
 @Feature("Тестирование API авторизации курьера")
@@ -87,7 +88,7 @@ public class CourierAuthorizationErrorTests {
             String expectedErrorMessage = "Недостаточно данных для входа";
 
             // Проверяем код и статус ответа
-            assertThat(responseWithoutPassword.getStatusCode(), is(400));
+            courierApi.checkStatusCode(responseWithoutPassword, SC_BAD_REQUEST);
             assertThat(responseWithoutPassword.jsonPath().getString("message"), is(expectedErrorMessage));
         } finally {
             courierApi.deleteCourier(courierID);
@@ -116,7 +117,7 @@ public class CourierAuthorizationErrorTests {
             String expectedErrorMessage = "Недостаточно данных для входа";
 
             // Проверяем код и статус ответа
-            courierApi.checkStatusCode(responseWithoutFields, 400);
+            courierApi.checkStatusCode(responseWithoutFields, SC_BAD_REQUEST);
             courierApi.printResponse(responseWithoutFields, gson);
             assertThat(responseWithoutFields.jsonPath().getString("message"), is(expectedErrorMessage));
 
@@ -134,7 +135,7 @@ public class CourierAuthorizationErrorTests {
 
         Response response = courierApi.authorizeCourier(incorrectBody);
 
-        assertThat(response.getStatusCode(), is(404));
+        assertThat(response.getStatusCode(), is(SC_NOT_FOUND));
         assertThat(response.jsonPath().getString("message"), is("Учетная запись не найдена"));
 
         System.out.println("Not existent user login:");

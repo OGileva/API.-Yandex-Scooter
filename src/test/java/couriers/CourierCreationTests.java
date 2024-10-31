@@ -11,7 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static couriers.CourierConstants.*;
-import static couriers.CourierConstants.COURIER_CREATE_ENDPOINT;
+import static org.apache.http.HttpStatus.SC_CREATED;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
@@ -54,8 +54,9 @@ public class CourierCreationTests {
         Response response = courierApi.createCourier(body);
 
         // Проверяем статус код и ответ
-        courierApi.checkStatusCode(response, 201);
+        assertThat(response.getStatusCode(), is(SC_CREATED)); // Проверка, что статус 201 Created
         assertThat(response.jsonPath().get("ok"), is(true));
+
 
         // Получаем ID курьера
         courierID = courierApi.getCourierId(courier.getLogin(), courier.getPassword());
@@ -102,7 +103,7 @@ public class CourierCreationTests {
         Response response = courierApi.createCourier(body);
 
         // Проверяем статус код и ответ
-        courierApi.checkStatusCode(response, 201);
+        assertThat(response.getStatusCode(), is(SC_CREATED)); // Проверка, что статус 201 Created
         System.out.println("Код ответа 201 Created");
 
         // Получаем ID курьера
