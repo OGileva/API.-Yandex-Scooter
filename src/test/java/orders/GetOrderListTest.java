@@ -19,7 +19,8 @@ public class GetOrderListTest{
     @DisplayName("Получение списка заказов")
     @Description("Можно получить список всех заказов - возвращается в теле ответа")
     public void getAllOrders() {
-        Response response = OrderMethods.getAllOrders();
+        Response response = OrderApi.getAllOrders();
+        OrderApi.checkResponseBody(response);
         response.then().assertThat().body("orders", hasSize(greaterThan(0))).and().statusCode(SC_OK);
     }
 }

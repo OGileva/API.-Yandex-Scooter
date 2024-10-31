@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder;
 import io.qameta.allure.*;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
-import io.restassured.config.HttpClientConfig;
 import io.restassured.response.Response;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,11 +16,11 @@ import static org.hamcrest.Matchers.*;
 @Epic("Яндекс.Самокат")
 @Feature("Тестирование API авторизации курьера")
 @DisplayName("Проверка возможности авторизации курьера")
-public class CourierAuthorizationError {
+public class CourierAuthorizationErrorTests {
 
     private Gson gson;
     private int courierID = -1;
-    private CourierMethods courierMethods = new CourierMethods();
+    private CourierApi courierApi = new CourierApi();
 
     @Before
     @Step("Подготовка данных")
@@ -39,7 +38,7 @@ public class CourierAuthorizationError {
         // Создаем курьера
         Courier courier = new Courier("Davis", "1234", "McClean");
         String body = gson.toJson(courier);
-        courierMethods.createCourier(body);
+        courierApi.createCourier(body);
 
         // Задаем ожидаемое сообщение об ошибке
         String expectedErrorMessage = "Недостаточно данных для входа";
@@ -48,27 +47,19 @@ public class CourierAuthorizationError {
         String bodyWithoutLogin = "{\"password\": \"1234\" }";
 
         // Получаем ID курьера
-        courierID = courierMethods.getCourierId(courier.getLogin(), courier.getPassword());
+        courierID = courierApi.getCourierId(courier.getLogin(), courier.getPassword());
 
         try {
             // Отправляем POST запрос для авторизации
-            Response responseWithoutLogin = RestAssured
-                    .given()
-                    .header("Content-Type", "application/json")
-                    .body(bodyWithoutLogin)
-                    .config(RestAssured.config()
-                            .httpClient(HttpClientConfig.httpClientConfig()
-                                    .setParam("http.connection.timeout", 5000) // время на соединение
-                                    .setParam("http.socket.timeout", 5000))) // таймаут ожидания ответа
-                    .post(COURIER_LOGIN_ENDPOINT);
+            Response responseWithoutLogin = courierApi.authorizeCourier(bodyWithoutLogin);
 
             // Проверяем код и статус ответа
-            courierMethods.checkStatusCode(responseWithoutLogin, 400);
-            courierMethods.printResponse(responseWithoutLogin, gson);
+            courierApi.checkStatusCode(responseWithoutLogin, 400);
+            courierApi.printResponse(responseWithoutLogin, gson);
             assertThat(responseWithoutLogin.jsonPath().getString("message"), is(expectedErrorMessage));
 
         } finally {
-            courierMethods.deleteCourier(courierID);
+            courierApi.deleteCourier(courierID);
         }
     }
 
@@ -80,25 +71,17 @@ public class CourierAuthorizationError {
         // Создаем курьера
         Courier courier = new Courier("Davis", "1234", "McClean");
         String body = gson.toJson(courier);
-        courierMethods.createCourier(body);
+        courierApi.createCourier(body);
 
         // Получаем ID курьера
-        courierID = courierMethods.getCourierId(courier.getLogin(), courier.getPassword());
+        courierID = courierApi.getCourierId(courier.getLogin(), courier.getPassword());
 
         try {
             // Создаем запрос для авторизации без поля password
             String bodyWithoutPassword = "{\"login\": \"Davis\" }";
 
             // Отправляем POST запрос для авторизации
-            Response responseWithoutPassword = RestAssured
-                    .given()
-                    .header("Content-Type", "application/json")
-                    .body(bodyWithoutPassword)
-                    .config(RestAssured.config()
-                            .httpClient(HttpClientConfig.httpClientConfig()
-                                    .setParam("http.connection.timeout", 5000) // время на соединение
-                                    .setParam("http.socket.timeout", 5000))) // таймаут ожидания ответа
-                    .post(COURIER_LOGIN_ENDPOINT);
+            Response responseWithoutPassword = courierApi.authorizeCourier(bodyWithoutPassword);
 
             // Задаем ожидаемое сообщение об ошибке
             String expectedErrorMessage = "Недостаточно данных для входа";
@@ -107,7 +90,7 @@ public class CourierAuthorizationError {
             assertThat(responseWithoutPassword.getStatusCode(), is(400));
             assertThat(responseWithoutPassword.jsonPath().getString("message"), is(expectedErrorMessage));
         } finally {
-            courierMethods.deleteCourier(courierID);
+            courierApi.deleteCourier(courierID);
         }
     }
 
@@ -119,34 +102,26 @@ public class CourierAuthorizationError {
         // Создаем курьера
         Courier courier = new Courier("Davis", "1234", "McClean");
         String body = gson.toJson(courier);
-        courierMethods.createCourier(body);
+        courierApi.createCourier(body);
 
         // Получаем ID курьера
-        courierID = courierMethods.getCourierId(courier.getLogin(), courier.getPassword());
+        courierID = courierApi.getCourierId(courier.getLogin(), courier.getPassword());
 
         try {
             // Создаем запрос для авторизации без логина и пароля
             String bodyWithoutFields = "{}";
             // Отправляем POST запрос для авторизации
-            Response responseWithoutFields = RestAssured
-                    .given()
-                    .header("Content-Type", "application/json")
-                    .body(bodyWithoutFields)
-                    .config(RestAssured.config()
-                            .httpClient(HttpClientConfig.httpClientConfig()
-                                    .setParam("http.connection.timeout", 5000) // время на соединение
-                                    .setParam("http.socket.timeout", 5000))) // таймаут ожидания ответа
-                    .post(COURIER_LOGIN_ENDPOINT);
+            Response responseWithoutFields = courierApi.authorizeCourier(bodyWithoutFields);
             // Задаем ожидаемое сообщение об ошибке
             String expectedErrorMessage = "Недостаточно данных для входа";
 
             // Проверяем код и статус ответа
-            courierMethods.checkStatusCode(responseWithoutFields, 400);
-            courierMethods.printResponse(responseWithoutFields, gson);
+            courierApi.checkStatusCode(responseWithoutFields, 400);
+            courierApi.printResponse(responseWithoutFields, gson);
             assertThat(responseWithoutFields.jsonPath().getString("message"), is(expectedErrorMessage));
 
         } finally {
-            courierMethods.deleteCourier(courierID);
+            courierApi.deleteCourier(courierID);
         }
     }
 
@@ -155,12 +130,9 @@ public class CourierAuthorizationError {
     @Description("Появление сообщения об ошибке, если указаны несуществующие логин и пароль. Код и статус ответа 404 Not Found.")
     @Severity(SeverityLevel.NORMAL)
     public void incorrectCourierAuthorizationTest() {
-        String incorrectBody = "{ \"login\": \"Adamoff\", \"password\": \"12347\" }";
+        String incorrectBody = "{ \"login\": \"piuhguhrbihfl\", \"password\": \"12347\" }";
 
-        Response response = RestAssured.given()
-                .header("Content-Type", "application/json")
-                .body(incorrectBody)
-                .post("/api/v1/courier/login");
+        Response response = courierApi.authorizeCourier(incorrectBody);
 
         assertThat(response.getStatusCode(), is(404));
         assertThat(response.jsonPath().getString("message"), is("Учетная запись не найдена"));

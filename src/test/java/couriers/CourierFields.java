@@ -21,7 +21,7 @@ public class CourierFields {
 
     private Gson gson;
     private int courierID = -1;
-    private CourierMethods courierMethods = new CourierMethods();
+    private CourierApi courierApi = new CourierApi();
 
     @Before
     @Step("Подготовка данных")
@@ -34,7 +34,7 @@ public class CourierFields {
     @Step("Удаление курьера после теста")
     public void tearDown() {
         if (courierID != -1) {
-            courierMethods.deleteCourier(courierID);
+            courierApi.deleteCourier(courierID);
         }
     }
 
@@ -50,18 +50,14 @@ public class CourierFields {
         String body = gson.toJson(courier);
 
         // Отправляем POST запрос
-        Response response = RestAssured.given()
-                .header("Content-Type", "application/json")
-                .body(body)
-                .when()
-                .post(COURIER_CREATE_ENDPOINT);
+        Response response = courierApi.createCourier(body);
 
         // Проверяем статус код и ответ
-        courierMethods.checkStatusCode(response, 201);
+        courierApi.checkStatusCode(response, 201);
         assertThat(response.jsonPath().get("ok"), is(true));
 
         //Получаем ID курьера
-        courierID = courierMethods.getCourierId(courier.getLogin(), courier.getPassword());
+        courierID = courierApi.getCourierId(courier.getLogin(), courier.getPassword());
         System.out.println("Успешное создание учетной записи с полями login, password, first name");
     }
 
@@ -76,13 +72,9 @@ public class CourierFields {
         String expectedMessage = "Недостаточно данных для создания учетной записи";
 
         //Отправляем POST запрос на создание курьера
-        Response response = RestAssured.
-                given()
-                .header("Content-Type", "application/json")
-                .body(bodyWithoutLogin)
-                .post(COURIER_CREATE_ENDPOINT);
+        Response response = courierApi.createCourier(bodyWithoutLogin);
 
-        courierMethods.printResponse(response, gson);
+        courierApi.printResponse(response, gson);
         assertThat(response.jsonPath().getString("message"), is(expectedMessage));
         System.out.println("Курьер не создан: не заполнено поле login");
     }
@@ -93,18 +85,14 @@ public class CourierFields {
     @Severity(SeverityLevel.CRITICAL)
     public void courierCreationWithoutPasswordTest() {
         //Создаем тело запроса без пароля
-        String bodyWithoutLogin = "{ \"login\": \"Diana\", \"firstName\": \"Tejada\" }";
+        String bodyWithoutPassword = "{ \"login\": \"Diana\", \"firstName\": \"Tejada\" }";
         //Задаем ожидаемое сообщение об ошибке
         String expectedMessage = "Недостаточно данных для создания учетной записи";
 
         //Отправляем POST запрос на создание курьера
-        Response response = RestAssured.
-                given()
-                .header("Content-Type", "application/json")
-                .body(bodyWithoutLogin)
-                .post(COURIER_CREATE_ENDPOINT);
+        Response response = courierApi.createCourier(bodyWithoutPassword);
 
-        courierMethods.printResponse(response, gson);
+        courierApi.printResponse(response, gson);
         assertThat(response.jsonPath().getString("message"), is(expectedMessage));
         System.out.println("Курьер не создан: не заполнено поле password");
     }
@@ -115,18 +103,14 @@ public class CourierFields {
     @Severity(SeverityLevel.CRITICAL)
     public void courierCreationWithoutRequiredFieldsTest() {
         //Создаем тело запроса без логина и пароля
-        String bodyWithoutLogin = "{\"firstName\": \"Tejada\" }";
+        String bodyWithoutRequiredFields = "{\"firstName\": \"Tejada\" }";
         //Задаем ожидаемое сообщение об ошибке
         String expectedMessage = "Недостаточно данных для создания учетной записи";
 
         //Отправляем POST запрос на создание курьера
-        Response response = RestAssured.
-                given()
-                .header("Content-Type", "application/json")
-                .body(bodyWithoutLogin)
-                .post(COURIER_CREATE_ENDPOINT);
+        Response response = courierApi.createCourier(bodyWithoutRequiredFields);
 
-        courierMethods.printResponse(response, gson);
+        courierApi.printResponse(response, gson);
         assertThat(response.jsonPath().getString("message"), is(expectedMessage));
         System.out.println("Курьер не создан: не заполнены обязательные поля");
     }

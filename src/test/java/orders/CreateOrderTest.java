@@ -56,7 +56,7 @@ public class CreateOrderTest {
         Order order = new Order(firstName, lastName, address,
                 metroStation, phone, deliveryDate, comment, color, rentTime);
 
-        Response response = OrderMethods.createOrder(order);
-        OrderMethods.checkTrackingNumber(response, SC_CREATED);
+        Response response = OrderApi.createOrder(order);
+        OrderApi.checkTrackingNumber(response, SC_CREATED);
     }
 }

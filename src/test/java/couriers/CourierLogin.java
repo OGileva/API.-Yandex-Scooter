@@ -21,7 +21,7 @@ public class CourierLogin {
 
     private Gson gson;
     private int courierID = -1;
-    private CourierMethods courierMethods = new CourierMethods();
+    private CourierApi courierApi = new CourierApi();
 
     @Before
     @Step("Подготовка данных")
@@ -35,7 +35,7 @@ public class CourierLogin {
     @Step("Удаление курьера после теста")
     public void tearDown() {
         if (courierID != -1) {
-            courierMethods.deleteCourier(courierID);
+            courierApi.deleteCourier(courierID);
         }
     }
 
@@ -48,23 +48,19 @@ public class CourierLogin {
         //Создаем курьера
         Courier courier = new Courier("Drew", "1234");
         String body = gson.toJson(courier);
-        courierMethods.createCourier(body);
+        courierApi.createCourier(body);
 
         //Создаем запрос для авторизации
         String loginBody = "{ \"login\": \"Drew\", \"password\": \"1234\" }";
 
         //Отправляем POST запрос для авторизации
-        Response loginResponse = RestAssured
-                .given()
-                .header("Content-Type", "application/json")
-                .body(loginBody)
-                .post(COURIER_LOGIN_ENDPOINT);
+        Response loginResponse = courierApi.authorizeCourier(loginBody);
 
         //Проверяем код ответа
-        courierMethods.checkStatusCode(loginResponse, 200);
+        courierApi.checkStatusCode(loginResponse, 200);
         System.out.println("Курьер успешно авторизован");
 
-        courierID = courierMethods.getCourierId(courier.getLogin(), courier.getPassword());
+        courierID = courierApi.getCourierId(courier.getLogin(), courier.getPassword());
     }
 
     @Test
@@ -74,22 +70,18 @@ public class CourierLogin {
     public void courierAuthorizationGetIdTest() {
 
         //Создаем курьера
-        Courier courier = new Courier("Drew", "1234");
+        Courier courier = new Courier("Kane", "1234");
         String body = gson.toJson(courier);
-        courierMethods.createCourier(body);
+        courierApi.createCourier(body);
 
         //Создаем запрос для авторизации
         String loginBody = "{ \"login\": \"Kane\", \"password\": \"1234\" }";
 
         //Отправляем POST запрос для авторизации
-        Response loginResponse = RestAssured
-                .given()
-                .header("Content-Type", "application/json")
-                .body(loginBody)
-                .post(COURIER_LOGIN_ENDPOINT);
+        Response loginResponse = courierApi.authorizeCourier(loginBody);
 
         //Получаем ID курьера
-        courierID = courierMethods.getCourierId(courier.getLogin(), courier.getPassword());
+        courierID = courierApi.getCourierId(courier.getLogin(), courier.getPassword());
         // Проверяем ID курьера получен корректно
         assertThat(courierID, is(not(-1)));
         System.out.println("Успешный запрос возвращает ID курьера " + loginResponse.asString());

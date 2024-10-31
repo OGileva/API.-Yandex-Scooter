@@ -11,17 +11,18 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static couriers.CourierConstants.*;
+import static couriers.CourierConstants.COURIER_CREATE_ENDPOINT;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 @Epic("Яндекс.Самокат")
 @Feature("Тестирование API создания курьера")
 @DisplayName("Проверка возможности создания курьера")
-public class CourierCreation {
+public class CourierCreationTests {
 
     private Gson gson;
     private int courierID = -1;
-    private CourierMethods courierMethods = new CourierMethods();
+    private CourierApi courierApi = new CourierApi();
 
     @Before
     @Step("Подготовка данных")
@@ -34,7 +35,7 @@ public class CourierCreation {
     @Step("Удаление курьера после теста")
     public void tearDown() {
         if (courierID != -1) {
-            courierMethods.deleteCourier(courierID);
+            courierApi.deleteCourier(courierID);
         }
     }
 
@@ -50,18 +51,14 @@ public class CourierCreation {
         String body = gson.toJson(courier);
 
         // Выполняем POST запрос для создания курьера
-        Response response = RestAssured
-                .given()
-                .header("Content-Type", "application/json")
-                .body(body)
-                .post(COURIER_CREATE_ENDPOINT);
+        Response response = courierApi.createCourier(body);
 
         // Проверяем статус код и ответ
-        courierMethods.checkStatusCode(response, 201);
+        courierApi.checkStatusCode(response, 201);
         assertThat(response.jsonPath().get("ok"), is(true));
 
         // Получаем ID курьера
-        courierID = courierMethods.getCourierId(courier.getLogin(), courier.getPassword());
+        courierID = courierApi.getCourierId(courier.getLogin(), courier.getPassword());
         if(courierID != -1) {
             System.out.println("Учетная запись курьера успешно создана в системе");
         }
@@ -78,21 +75,17 @@ public class CourierCreation {
         String body = gson.toJson(courier);
 
         // Выполняем POST запрос для создания курьера
-        Response response = RestAssured
-                .given()
-                .header("Content-Type", "application/json")
-                .body(body)
-                .post(COURIER_CREATE_ENDPOINT);
+        Response response = courierApi.createCourier(body);
 
         //Форматируем тело ответа
-        String formattedResponseBody = courierMethods.formatResponseBody(response.getBody().asString());
+        String formattedResponseBody = courierApi.formatResponseBody(response.getBody().asString());
 
         // Проверяем, что ответ содержит "ok: true"
         assertThat(formattedResponseBody, containsString("\"ok\": true"));
         System.out.println("Возвращается тело ответа ok:true");
 
         // Получаем ID курьера
-        courierID = courierMethods.getCourierId(courier.getLogin(), courier.getPassword());
+        courierID = courierApi.getCourierId(courier.getLogin(), courier.getPassword());
     }
 
     @Test
@@ -106,18 +99,13 @@ public class CourierCreation {
         String body = gson.toJson(courier);
 
         // Выполняем POST запрос для создания курьера
-        Response response = RestAssured
-                .given()
-                .header("Content-Type", "application/json")
-                .body(body)
-                .post(COURIER_CREATE_ENDPOINT);
+        Response response = courierApi.createCourier(body);
 
         // Проверяем статус код и ответ
-        courierMethods.checkStatusCode(response, 201);
+        courierApi.checkStatusCode(response, 201);
         System.out.println("Код ответа 201 Created");
 
         // Получаем ID курьера
-        courierID = courierMethods.getCourierId(courier.getLogin(), courier.getPassword());
+        courierID = courierApi.getCourierId(courier.getLogin(), courier.getPassword());
     }
 }
-

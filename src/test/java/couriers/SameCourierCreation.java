@@ -21,7 +21,7 @@ public class SameCourierCreation {
 
     private Gson gson;
     private int courierID = -1;
-    private CourierMethods courierMethods = new CourierMethods();
+    private CourierApi courierApi = new CourierApi();
 
     @Before
     @Step("Подготовка данных")
@@ -34,7 +34,7 @@ public class SameCourierCreation {
     @Step("Удаление курьера после теста")
     public void tearDown() {
         if (courierID != -1) {
-            courierMethods.deleteCourier(courierID);
+            courierApi.deleteCourier(courierID);
         }
     }
 
@@ -50,24 +50,16 @@ public class SameCourierCreation {
         String body = gson.toJson(courier);
 
         //Создаем первого курьера
-        Response firstCourierResponse = RestAssured
-                .given()
-                .header("Content-Type", "application/json")
-                .body(body)
-                .post(COURIER_CREATE_ENDPOINT);
+        Response firstCourierResponse = courierApi.createCourier(body);
 
         //Создаем второго курьера с таким же логином
-        Response secondCourierResponse = RestAssured
-                .given()
-                .header("Content-Type", "application/json")
-                .body(body)
-                .post(COURIER_CREATE_ENDPOINT);
+        Response secondCourierResponse = courierApi.createCourier(body);
 
         // Проверяем статус ответа
-        courierMethods.checkStatusCode(secondCourierResponse, 409);
+        courierApi.checkStatusCode(secondCourierResponse, 409);
         System.out.println("Вы создаете курьера с уже существующим логином");
 
-        courierID = courierMethods.getCourierId(courier.getLogin(), courier.getPassword());
+        courierID = courierApi.getCourierId(courier.getLogin(), courier.getPassword());
     }
 
     @Test
@@ -82,25 +74,17 @@ public class SameCourierCreation {
         String body = gson.toJson(courier);
 
         //Создаем первого курьера
-        Response firstCourierResponse = RestAssured
-                .given()
-                .header("Content-Type", "application/json")
-                .body(body)
-                .post(COURIER_CREATE_ENDPOINT);
+        Response firstCourierResponse = courierApi.createCourier(body);
 
         //Создаем второго курьера с таким же логином
-        Response secondCourierResponse = RestAssured
-                .given()
-                .header("Content-Type", "application/json")
-                .body(body)
-                .post(COURIER_CREATE_ENDPOINT);
+        Response secondCourierResponse = courierApi.createCourier(body);
 
         //Проверяем сообщение об ошибке
-        courierMethods.printResponse(secondCourierResponse, gson);
+        courierApi.printResponse(secondCourierResponse, gson);
         String expectedMessage = "Этот логин уже используется. Попробуйте другой.";
         assertThat(secondCourierResponse.jsonPath().getString("message"), is(expectedMessage));
 
         //Получаем ID курьера
-        courierID = courierMethods.getCourierId(courier.getLogin(), courier.getPassword());
+        courierID = courierApi.getCourierId(courier.getLogin(), courier.getPassword());
     }
 }
