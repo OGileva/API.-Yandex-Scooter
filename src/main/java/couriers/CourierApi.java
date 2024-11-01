@@ -21,13 +21,14 @@ public class CourierApi {
 
     //Удаление курьера
     @Step("Удаление курьера")
-    public void deleteCourier(int courierId) {
-        RestAssured
+    public Response deleteCourier(int courierId) {
+        return RestAssured
                 .given()
                 .header("Content-Type", "application/json")
                 .delete(COURIER_DELETE_ENDPOINT + courierId)
                 .then()
-                .statusCode(200);
+                .extract()
+                .response();
     }
 
 
